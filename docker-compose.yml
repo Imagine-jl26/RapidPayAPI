@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: rapidpay_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: rapidpay_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  rapidpay_api:
+    build:
+      context: .
+      dockerfile: RapidPayAPI/Dockerfile
+    container_name: RapidPayAPI
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+      - "32769:8081"
+
+volumes:
+  pgdata:
